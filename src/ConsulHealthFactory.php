@@ -23,7 +23,7 @@ class ConsulHealthFactory
             $config = $container->get(ConfigInterface::class);
             $token = $config->get('services.drivers.consul.token', '');
             $options = [
-                'timeout' => 2,
+                'timeout' => (int) $config->get('services.drivers.consul.timeout', 2),
                 'base_uri' => $config->get('services.drivers.consul.uri', Health::DEFAULT_URI),
             ];
 
