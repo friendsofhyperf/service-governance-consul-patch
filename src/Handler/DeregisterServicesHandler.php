@@ -14,6 +14,7 @@ use FriendsOfHyperf\ServiceGovernanceConsulPatch\ConsulHealth;
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Hyperf\ServiceGovernanceConsul\ConsulAgent;
 use Hyperf\Signal\SignalHandlerInterface;
@@ -61,6 +62,11 @@ class DeregisterServicesHandler implements SignalHandlerInterface
         'component' => 'service-governance-extra',
     ];
 
+    /**
+     * @var IPReaderInterface
+     */
+    protected $ipReader;
+
     public function __construct(ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
@@ -68,6 +74,7 @@ class DeregisterServicesHandler implements SignalHandlerInterface
         $this->consulHealth = $container->get(ConsulHealth::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->serviceManager = $container->get(ServiceManager::class);
+        $this->ipReader = $container->get(IPReaderInterface::class);
     }
 
     public function listen(): array
@@ -163,7 +170,7 @@ class DeregisterServicesHandler implements SignalHandlerInterface
             $host = $server['host'];
 
             if (in_array($host, ['0.0.0.0', 'localhost'])) {
-                $host = $this->getInternalIp();
+                $host = $this->ipReader->read();
             }
 
             if (! filter_var($host, FILTER_VALIDATE_IP)) {
@@ -181,26 +188,5 @@ class DeregisterServicesHandler implements SignalHandlerInterface
         }
 
         return $result;
-    }
-
-    /**
-     * Get Internal IP.
-     * @throws RuntimeException
-     */
-    protected function getInternalIp(): string
-    {
-        $ips = swoole_get_local_ip();
-
-        if (is_array($ips) && ! empty($ips)) {
-            return current($ips);
-        }
-
-        /** @var mixed|string $ip */
-        $ip = gethostbyname(gethostname());
-        if (is_string($ip)) {
-            return $ip;
-        }
-
-        throw new \RuntimeException('Can not get the internal IP.');
     }
 }
