@@ -51,11 +51,6 @@ class DeregisterServicesHandler implements SignalHandlerInterface
     protected $config;
 
     /**
-     * @var Lock
-     */
-    protected $lock;
-
-    /**
      * @var array
      */
     protected $defaultLoggerContext = [
