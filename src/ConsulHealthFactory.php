@@ -21,10 +21,10 @@ class ConsulHealthFactory
     {
         return new Health(function () use ($container) {
             $config = $container->get(ConfigInterface::class);
-            $token = $config->get('consul.token', '');
+            $token = $config->get('services.drivers.consul.token', '');
             $options = [
                 'timeout' => 2,
-                'base_uri' => $config->get('consul.uri', Health::DEFAULT_URI),
+                'base_uri' => $config->get('services.drivers.consul.uri', Health::DEFAULT_URI),
             ];
 
             if (! empty($token)) {
