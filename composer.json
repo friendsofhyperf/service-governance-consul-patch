@@ -1,0 +1,50 @@
+{
+    "name": "friendsofhyperf/service-governance-consul-patch",
+    "description": "Patch for hyperf/service-governance-consul.",
+    "authors": [{
+        "name": "huangdijia",
+        "email": "huangdijia@gmail.com"
+    }],
+    "require": {
+        "hyperf/service-governance-consul": "~2.2.0",
+        "hyperf/signal": "^2.2"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "hyperf/di": "~2.2.0",
+        "hyperf/framework": "~2.2.0",
+        "hyperf/ide-helper": "^2.2",
+        "hyperf/utils": "~2.2.0",
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpunit": "^9.4",
+        "swoole/ide-helper": "^4.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "FriendsOfHyperf\\ServiceGovernanceConsulPatch\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FriendsOfHyperf\\ServiceGovernanceConsulPatch\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "hyperf": {
+            "config": "FriendsOfHyperf\\ServiceGovernanceConsulPatch\\ConfigProvider"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./src"
+    },
+    "repositories": [{
+        "type": "composer",
+        "url": "https://composer.addcn.com"
+    }]
+}
