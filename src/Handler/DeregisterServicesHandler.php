@@ -106,14 +106,13 @@ class DeregisterServicesHandler implements SignalHandlerInterface
 
                         [$address, $port] = $servers[$service['server']];
 
-                        switch ($service['publishTo']) {
-                        case 'consul':
-                            $callables[$serviceName] = function () use ($serviceName, $address, $port) {
-                                $this->deregisterService($serviceName, $address, $port);
-                            };
+                        if ($service['publishTo'] != 'consul') {
+                            continue;
+                        }
 
-                            break;
-                    }
+                        $callables[$serviceName] = function () use ($serviceName, $address, $port) {
+                            $this->deregisterService($serviceName, $address, $port);
+                        };
                     }
                 }
             }
