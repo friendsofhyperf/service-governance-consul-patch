@@ -109,7 +109,7 @@ class DeregisterServicesHandler implements SignalHandlerInterface
                         switch ($service['publishTo']) {
                         case 'consul':
                             $callables[$serviceName] = function () use ($serviceName, $address, $port) {
-                                $this->deregisterConsul($serviceName, $address, $port);
+                                $this->deregisterService($serviceName, $address, $port);
                             };
 
                             break;
@@ -132,7 +132,7 @@ class DeregisterServicesHandler implements SignalHandlerInterface
      * Deregister.
      * @throws ServerException
      */
-    protected function deregisterConsul(string $serviceName, string $address, int $port)
+    protected function deregisterService(string $serviceName, string $address, int $port)
     {
         collect($this->consulHealth->service($serviceName)->json())
             ->filter(function ($item) use ($address, $port) {
@@ -144,7 +144,7 @@ class DeregisterServicesHandler implements SignalHandlerInterface
             ->unique()
             ->each(function ($serviceId) {
                 $this->consulAgent->deregisterService($serviceId);
-                $this->logger->info(sprintf('Service %s unregistered.', $serviceId), $this->defaultLoggerContext);
+                $this->logger->info(sprintf('Service %s deregistered.', $serviceId), $this->defaultLoggerContext);
             });
     }
 
