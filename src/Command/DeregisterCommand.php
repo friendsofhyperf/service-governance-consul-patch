@@ -23,7 +23,7 @@ class DeregisterCommand extends \Hyperf\Command\Command
     /**
      * @var string
      */
-    protected $signature = 'service:deregister {service : "Service name"}';
+    protected $signature = 'service:deregister';
 
     /**
      * @var ConsulAgent
@@ -45,26 +45,25 @@ class DeregisterCommand extends \Hyperf\Command\Command
 
     public function handle()
     {
-        $serviceName = $this->input->getArgument('service');
+        $serviceNames = collect($this->consulAgent->services()->json())
+            ->transform(fn ($item) => $item['Service'])
+            ->values()
+            ->unique()
+            ->all();
+        $serviceName = $this->choice('ServiceName', $serviceNames);
 
-        if (! $serviceName) {
-            $this->error('Invalid argument [id]');
-            return;
-        }
-
-        $choices = collect($this->consulHealth->service($serviceName)->json())
-            ->transform(function ($item) {
-                return [
-                    $item['Service']['ID'] => sprintf('%s [%s]', $item['Service']['ID'], ''),
-                ];
-            })
+        $serviceIds = collect($this->consulHealth->service($serviceName)->json())
+            ->transform(fn ($item) => $item['Service']['ID'])
             ->unique()
             ->all();
 
-        $serviceId = $this->choice('Choice service id to deregister:', $choices);
+        $serviceId = $this->choice('ServiceID', $serviceIds);
+        $response = $this->consulAgent->deregisterService($serviceId);
 
-        $this->info('Your choice:' . $serviceId);
-
-        // $this->consulAgent->deregisterService($serviceName);
+        if ($response->getStatusCode() == 200 && $response->getBody()->getContents() == 'OK') {
+            $this->info('Deregister success.');
+        } else {
+            $this->warn('Deregister failed.');
+        }
     }
 }
