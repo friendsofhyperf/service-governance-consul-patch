@@ -57,10 +57,11 @@ class DeregisterCommand extends \Hyperf\Command\Command
         }
 
         $serviceIds = collect($this->consulHealth->service($serviceName)->json())
-            ->transform(fn ($item) => $item['Service']['ID'])
+            ->transform(fn ($item) => sprintf('%s [%s]', $item['Service']['ID'], $item['Checks'][0]['Status']))
             ->unique()
             ->all();
         $serviceId = $this->choice('ServiceID', $serviceIds);
+        [$serviceId] = explode(' ', $serviceId);
 
         $response = $this->consulAgent->deregisterService($serviceId);
 
