@@ -6,8 +6,9 @@
         "email": "huangdijia@gmail.com"
     }],
     "require": {
+        "hyperf/command": "~2.2.0",
         "hyperf/service-governance-consul": "~2.2.0",
-        "hyperf/signal": "^2.2"
+        "hyperf/signal": "~2.2.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.0",
