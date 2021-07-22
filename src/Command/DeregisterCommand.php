@@ -23,7 +23,7 @@ class DeregisterCommand extends \Hyperf\Command\Command
     /**
      * @var string
      */
-    protected $signature = 'service:deregister {service? : Service Name}';
+    protected $signature = 'consul:deregister {service? : Service Name}';
 
     /**
      * @var ConsulAgent
