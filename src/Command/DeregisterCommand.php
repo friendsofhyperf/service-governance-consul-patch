@@ -60,7 +60,7 @@ class DeregisterCommand extends \Hyperf\Command\Command
             ->tap(function ($services) {
                 $this->info(json_encode($services, JSON_PRETTY_PRINT), 'v');
             })
-            ->transform(fn ($item) => sprintf('%s [%s]', $item['Service']['ID'], $item['Checks'][0]['Status']))
+            ->transform(fn ($item) => sprintf('%s [%s]', $item['Service']['ID'], $item['Checks'][1]['Status']))
             ->unique()
             ->all();
         $serviceId = $this->choice('ServiceID', $serviceIds);
