@@ -57,6 +57,9 @@ class DeregisterCommand extends \Hyperf\Command\Command
         }
 
         $serviceIds = collect($this->consulHealth->service($serviceName)->json())
+            ->tap(function ($services) {
+                $this->info(json_encode($services, JSON_PRETTY_PRINT), 'v');
+            })
             ->transform(fn ($item) => sprintf('%s [%s]', $item['Service']['ID'], $item['Checks'][0]['Status']))
             ->unique()
             ->all();
