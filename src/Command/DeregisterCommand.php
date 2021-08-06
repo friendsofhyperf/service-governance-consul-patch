@@ -66,9 +66,9 @@ class DeregisterCommand extends \Hyperf\Command\Command
         $serviceId = $this->choice('ServiceID', $serviceIds);
         [$serviceId] = explode(' ', $serviceId);
 
-        $response = $this->consulAgent->deregisterService($serviceId);
+        $this->info($serviceId, 'v');
 
-        $this->info($response->getBody()->getContents(), 'v');
+        $response = $this->consulAgent->deregisterService($serviceId);
 
         if ($response->getReasonPhrase() == 'OK') {
             $this->info($serviceId . ' deregister success.');
