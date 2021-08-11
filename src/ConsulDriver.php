@@ -16,9 +16,14 @@ class ConsulDriver extends \Hyperf\ServiceGovernanceConsul\ConsulDriver
 {
     public function register(string $name, string $host, int $port, array $metadata): void
     {
-        /** @var ConfigInterface $config */
-        $config = $this->container->get(ConfigInterface::class);
-        $deregisterCriticalServiceAfter = $config->get('services.drivers.consul.deregister_critical_service_after', '10s');
+        if (isset($this->config) && $this->config instanceof ConfigInterface) {
+            /** @var ConfigInterface $config */
+            $config = $this->config;
+        } else {
+            $config = $this->container->get(ConfigInterface::class);
+        }
+        $deregisterCriticalServiceAfter = $config->get('services.drivers.consul.check.deregister_critical_service_after', '90m');
+        $interval = $config->get('services.drivers.consul.check.interval', '1s');
         $nextId = empty($metadata['id']) ? $this->generateId($this->getLastServiceId($name)) : $metadata['id'];
         $protocol = $metadata['protocol'];
         $requestBody = [
@@ -34,22 +39,50 @@ class ConsulDriver extends \Hyperf\ServiceGovernanceConsul\ConsulDriver
             $requestBody['Check'] = [
                 'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
                 'HTTP' => "http://{$host}:{$port}/",
-                'Interval' => '1s',
+                'Interval' => $interval,
             ];
         }
         if (in_array($protocol, ['jsonrpc', 'jsonrpc-tcp-length-check'], true)) {
             $requestBody['Check'] = [
                 'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
                 'TCP' => "{$host}:{$port}",
-                'Interval' => '1s',
+                'Interval' => $interval,
             ];
         }
         $response = $this->client()->registerService($requestBody);
         if ($response->getStatusCode() === 200) {
-            $this->registeredServices[$name][$protocol][$host][$port] = true;
             $this->logger->info(sprintf('Service %s:%s register to the consul successfully.', $name, $nextId));
         } else {
             $this->logger->warning(sprintf('Service %s register to the consul failed.', $name));
         }
+    }
+
+    public function isRegistered(string $name, string $address, int $port, array $metadata): bool
+    {
+        $protocol = $metadata['protocol'];
+        $client = $this->client();
+        $response = $client->services();
+        if ($response->getStatusCode() !== 200) {
+            $this->logger->warning(sprintf('Service %s register to the consul failed.', $name));
+            return false;
+        }
+        $services = $response->json();
+        $glue = ',';
+        $tag = implode($glue, [$name, $address, $port, $protocol]);
+        foreach ($services as $serviceId => $service) {
+            if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
+                continue;
+            }
+            $currentTag = implode($glue, [
+                $service['Service'],
+                $service['Address'],
+                $service['Port'],
+                $service['Meta']['Protocol'],
+            ]);
+            if ($currentTag === $tag) {
+                return true;
+            }
+        }
+        return false;
     }
 }
