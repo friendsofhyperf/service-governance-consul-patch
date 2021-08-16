@@ -16,10 +16,15 @@ class ConfigProvider
     {
         defined('BASE_PATH') or define('BASE_PATH', __DIR__);
 
+        $listeners = [];
+
+        if (class_exists('Hyperf\RpcMultiplex\Listener\RegisterServiceListener')) {
+            $listeners[] = 'Hyperf\RpcMultiplex\Listener\RegisterServiceListener';
+        }
+
         return [
             'dependencies' => [
                 \Hyperf\ServiceGovernance\Listener\RegisterServiceListener::class => Listener\RegisterServiceListener::class,
-                \Hyperf\ServiceGovernanceConsul\ConsulDriver::class => ConsulDriver::class,
                 ConsulHealth::class => ConsulHealthFactory::class,
             ],
             'annotations' => [
@@ -30,7 +35,7 @@ class ConfigProvider
                 ],
             ],
             'commands' => [],
-            'listeners' => [],
+            'listeners' => $listeners,
             'publish' => [],
             'signal' => [
                 'handlers' => [
