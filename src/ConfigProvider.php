@@ -25,6 +25,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 \Hyperf\ServiceGovernance\Listener\RegisterServiceListener::class => Listener\RegisterServiceListener::class,
+                \Hyperf\ServiceGovernanceConsul\ConsulDriver::class => ConsulDriver::class,
                 ConsulHealth::class => ConsulHealthFactory::class,
             ],
             'annotations' => [
