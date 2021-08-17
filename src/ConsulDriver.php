@@ -12,6 +12,11 @@ namespace FriendsOfHyperf\ServiceGovernanceConsulPatch;
 
 class ConsulDriver extends \Hyperf\ServiceGovernanceConsul\ConsulDriver
 {
+    public function getNodes(string $uri, string $name, array $metadata): array
+    {
+        return retry(5, fn () => parent::getNodes($uri, $name, $metadata), 500);
+    }
+
     public function isRegistered(string $name, string $address, int $port, array $metadata): bool
     {
         $protocol = $metadata['protocol'];
