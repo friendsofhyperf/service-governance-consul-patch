@@ -13,8 +13,8 @@ namespace FriendsOfHyperf\ServiceGovernanceConsulPatch\Handler;
 use FriendsOfHyperf\ServiceGovernanceConsulPatch\ConsulHealth;
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Hyperf\ServiceGovernanceConsul\ConsulAgent;
 use Hyperf\Signal\SignalHandlerInterface;
@@ -129,12 +129,8 @@ class DeregisterServicesHandler implements SignalHandlerInterface
     protected function deregisterService(string $serviceName, string $address, int $port)
     {
         collect($this->consulHealth->service($serviceName)->json())
-            ->filter(function ($item) use ($address, $port) {
-                return $address == $item['Service']['Address'] && $port == $item['Service']['Port'];
-            })
-            ->transform(function ($item) {
-                return $item['Service']['ID'];
-            })
+            ->filter(fn ($item) => $address == $item['Service']['Address'] && $port == $item['Service']['Port'])
+            ->transform(fn ($item) => $item['Service']['ID'])
             ->unique()
             ->each(function ($serviceId) {
                 $this->consulAgent->deregisterService($serviceId);

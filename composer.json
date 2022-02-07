@@ -6,20 +6,20 @@
         "email": "huangdijia@gmail.com"
     }],
     "require": {
-        "hyperf/command": "~2.2.0",
-        "hyperf/service-governance-consul": "~2.2.0",
-        "hyperf/signal": "~2.2.0"
+        "hyperf/command": "3.0.*",
+        "hyperf/service-governance-consul": "3.0.*",
+        "hyperf/signal": "3.0.*"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.0",
-        "hyperf/di": "~2.2.0",
-        "hyperf/event": "~2.2.0",
-        "hyperf/framework": "~2.2.0",
-        "hyperf/ide-helper": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
-        "phpstan/phpstan": "^0.12",
-        "phpunit/phpunit": "^9.4",
-        "swoole/ide-helper": "^4.7"
+        "hyperf/di": "3.0.*",
+        "hyperf/event": "3.0.*",
+        "hyperf/framework": "3.0.*",
+        "hyperf/ide-helper": "3.0.*",
+        "hyperf/utils": "3.0.*",
+        "phpstan/phpstan": "^1.0",
+        "phpunit/phpunit": "^9.4|^10.0",
+        "swoole/ide-helper": "dev-master"
     },
     "autoload": {
         "psr-4": {
