@@ -20,7 +20,7 @@ class RegisterServiceListener extends \Hyperf\ServiceGovernance\Listener\Registe
     /**
      * @param MainCoroutineServerStart|MainWorkerStart $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $reRegisterInterval = (int) $this->config->get('services.drivers.consul.check.re_register_interval', 10);
 
