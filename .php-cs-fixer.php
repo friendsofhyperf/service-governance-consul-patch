@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * @link     https://github.com/8591/friendsofhyperf/service-governance-consul-patch
  * @document https://github.com/8591/friendsofhyperf/service-governance-consul-patch/blob/main/README.md
- * @contact  hdj@addcn.com
+ * @contact  huangdijia@gmail.com
  */
 $header = <<<'EOF'
 This file is part of reporting.
