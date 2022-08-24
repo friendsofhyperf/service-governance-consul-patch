@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * This file is part of reporting.
+ * This file is part of service-governance-consul-patch.
  *
  * @link     https://github.com/8591/friendsofhyperf/service-governance-consul-patch
  * @document https://github.com/8591/friendsofhyperf/service-governance-consul-patch/blob/main/README.md
